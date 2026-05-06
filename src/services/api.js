@@ -22,5 +22,11 @@ export const getDiscoverTV = (page = 1, genreId = null) =>
     params: { page, ...(genreId && { with_genres: genreId }) },
   });
 
+export const searchTV = (query, page = 1) =>
+  api.get("/search/tv", { params: { query, page } });
+
+export const searchMovies = (query, page = 1) =>
+  api.get("/search/movie", { params: { query, page } });
+
 export const getImageUrl = (path, size = "w500") =>
   `https://image.tmdb.org/t/p/${size}${path}`;

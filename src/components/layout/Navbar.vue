@@ -1,27 +1,27 @@
 <script setup>
-import { computed } from 'vue'
-import { useRoute, RouterLink } from 'vue-router'
-import { Search, Bell, User } from 'lucide-vue-next'
+import { computed } from "vue";
+import { useRoute, RouterLink } from "vue-router";
+import { Search, Bell, User } from "lucide-vue-next";
 
-const route = useRoute()
+const route = useRoute();
+// const search = ref("");
 
 const navItems = [
-  { id: 'home', name: 'Home', path: '/' },
-  { id: 'movies', name: 'Movies', path: '/movies' },
-  { id: 'tvshows', name: 'TV Shows', path: '/tvshows' },
-  { id: 'watchlist', name: 'Watchlist', path: '/watchlist' },
-]
+  { id: "home", name: "Home", path: "/" },
+  { id: "movies", name: "Movies", path: "/movies" },
+  { id: "tvshows", name: "TV Shows", path: "/tvshows" },
+  { id: "watchlist", name: "Watchlist", path: "/watchlist" },
+];
 
 const activeSection = computed(() => {
-  return route.path === '/' ? 'home' : route.path.substring(1)
-})
+  return route.path === "/" ? "home" : route.path.substring(1);
+});
 </script>
 
 <template>
   <nav class="fixed top-0 left-0 right-0 z-50 bg-dark">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center h-16">
-
+      <div class="flex items-center h-20">
         <RouterLink
           to="/"
           class="text-xl font-black text-primary mr-10"
@@ -51,9 +51,12 @@ const activeSection = computed(() => {
         </div>
 
         <div class="flex items-center gap-8 text-white/70">
-          <button class="hover:text-white transition-colors">
-            <Search :size="20" />
-          </button>
+          <!-- <input
+            v-model="search"
+            type="text"
+            placeholder="Search..."
+            class="bg-white/10 text-white placeholder-white/40 rounded-full text-sm px-4 py-2 outline-none focus:bg-white/15 transition w-full sm:w-42"
+          /> -->
           <button class="hover:text-white transition-colors">
             <Bell :size="20" />
           </button>

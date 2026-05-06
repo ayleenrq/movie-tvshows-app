@@ -1,16 +1,21 @@
 <script setup>
-import { ref, onMounted, computed } from "vue";
-import { getDiscoverTV } from "../services/api";
+import { ref, onMounted, watch } from "vue";
+import { getDiscoverTV, getTVGenres, searchTV } from "../services/api";
 import Card from "../components/ui/Card.vue";
 
 const tvShows = ref([]);
 const page = ref(1);
 const hasMore = ref(true);
 const loading = ref(true);
+const genres = ref([]);
+const search = ref("");
+const selectedGenre = ref(null);
 
 const fetchTVShows = async () => {
   try {
-    const res = await getDiscoverTV(page.value);
+    const res = search.value
+      ? await searchTV(search.value, page.value)
+      : await getDiscoverTV(page.value, selectedGenre.value);
     tvShows.value = [...tvShows.value, ...res.data.results];
     hasMore.value = page.value < res.data.total_pages;
   } catch (err) {
@@ -25,7 +30,33 @@ const loadMore = () => {
   fetchTVShows();
 };
 
-onMounted(fetchTVShows);
+const fetchGenres = async () => {
+  const res = await getTVGenres();
+  genres.value = res.data.genres;
+};
+
+const onGenreChange = (genreId) => {
+  selectedGenre.value = genreId === selectedGenre.value ? null : genreId;
+  tvShows.value = [];
+  page.value = 1;
+  fetchTVShows();
+};
+
+const reset = () => {
+  tvShows.value = [];
+  page.value = 1;
+};
+
+watch(search, () => {
+  selectedGenre.value = null;
+  reset();
+  fetchTVShows();
+});
+
+onMounted(async () => {
+  await fetchGenres();
+  fetchTVShows();
+});
 </script>
 
 <template>
@@ -38,6 +69,32 @@ onMounted(fetchTVShows);
           <h1 class="text-3xl font-bold">TV Shows</h1>
           <p class="text-white/60">Browse TV show picks here.</p>
         </div>
+
+        <div class="flex flex-col gap-3">
+          <input
+            v-model="search"
+            type="text"
+            placeholder="Search Movie..."
+            class="bg-white/10 text-white placeholder-white/40 rounded-full px-6 py-3 outline-none focus:bg-white/15 transition w-full sm:w-80"
+          />
+
+          <div class="flex flex-wrap gap-2 gap-y-3 mt-3">
+            <button
+              v-for="genre in genres"
+              :key="genre.id"
+              @click="onGenreChange(genre.id)"
+              :class="[
+                'px-5 py-2 rounded-full text-sm transition',
+                selectedGenre === genre.id
+                  ? 'bg-primary text-white'
+                  : 'bg-white/10 text-white/80 hover:bg-white/20',
+              ]"
+            >
+              {{ genre.name }}
+            </button>
+          </div>
+        </div>
+
         <div class="flex gap-2"></div>
         <div
           class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-4 md:gap-4 lg:gap-6 gap-y-8"

@@ -1,16 +1,25 @@
 <script setup>
-import { ref, onMounted, computed} from "vue";
-import { getDiscoverMovies } from "../services/api";
+import { ref, onMounted, watch } from "vue";
+import {
+  getDiscoverMovies,
+  getMovieGenres,
+  searchMovies,
+} from "../services/api";
 import Card from "../components/ui/Card.vue";
 
 const movies = ref([]);
 const page = ref(1);
 const hasMore = ref(true);
 const loading = ref(true);
+const genres = ref([]);
+const search = ref("");
+const selectedGenre = ref(null);
 
 const fetchMovies = async () => {
   try {
-    const res = await getDiscoverMovies(page.value);
+    const res = search.value
+      ? await searchMovies(search.value, page.value)
+      : await getDiscoverMovies(page.value, selectedGenre.value);
     movies.value = [...movies.value, ...res.data.results];
     hasMore.value = page.value < res.data.total_pages;
   } catch (err) {
@@ -25,7 +34,33 @@ const loadMore = () => {
   fetchMovies();
 };
 
-onMounted(fetchMovies);
+const fetchGenres = async () => {
+  const res = await getMovieGenres();
+  genres.value = res.data.genres;
+};
+
+const onGenreChange = (genreId) => {
+  selectedGenre.value = genreId === selectedGenre.value ? null : genreId;
+  movies.value = [];
+  page.value = 1;
+  fetchMovies();
+};
+
+const reset = () => {
+  movies.value = [];
+  page.value = 1;
+};
+
+watch(search, () => {
+  selectedGenre.value = null;
+  reset();
+  fetchMovies();
+});
+
+onMounted(async () => {
+  await fetchGenres();
+  fetchMovies();
+});
 </script>
 
 <template>
@@ -38,6 +73,32 @@ onMounted(fetchMovies);
           <h1 class="text-3xl font-bold">Movies</h1>
           <p class="text-white/60">Explore movie picks here.</p>
         </div>
+
+        <div class="flex flex-col gap-3">
+          <input
+            v-model="search"
+            type="text"
+            placeholder="Search Movie..."
+            class="bg-white/10 text-white placeholder-white/40 rounded-full px-6 py-3 outline-none focus:bg-white/15 transition w-full sm:w-80"
+          />
+
+          <div class="flex flex-wrap gap-2 gap-y-3 mt-3">
+            <button
+              v-for="genre in genres"
+              :key="genre.id"
+              @click="onGenreChange(genre.id)"
+              :class="[
+                'px-5 py-2 rounded-full text-sm transition',
+                selectedGenre === genre.id
+                  ? 'bg-primary text-white'
+                  : 'bg-white/10 text-white/80 hover:bg-white/20',
+              ]"
+            >
+              {{ genre.name }}
+            </button>
+          </div>
+        </div>
+
         <div
           class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-4 md:gap-4 lg:gap-6 gap-y-8"
         >
