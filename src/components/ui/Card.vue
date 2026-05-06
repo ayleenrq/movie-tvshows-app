@@ -1,25 +1,34 @@
 <script setup>
 import { getImageUrl } from "../../services/api";
+import { useWatchlist } from "../../stores/watchlist";
+import { useRouter } from "vue-router";
 
 const props = defineProps({
   item: Object,
 });
 
+const router = useRouter();
 const isRecommended = (item) => item.vote_average > 8 && item.vote_count > 1000;
 const getTitle = (item) => item.title || item.name;
 const getYear = (item) => {
   const date = item.release_date || item.first_air_date;
   return date?.split?.("-")?.[0] || "Unknown";
 };
+const { toggle, isWatchlisted } = useWatchlist();
+
+const goToDetail = () => {
+  const type = props.item.title ? "movie" : "tv";
+  router.push(`/${type}/${props.item.id}`);
+};
 </script>
 
 <template>
-  <div class="w-full cursor-pointer group relative">
+  <div @click="goToDetail" class="w-full cursor-pointer group relative">
     <div class="relative rounded-lg overflow-hidden">
       <img
         :src="getImageUrl(item.poster_path)"
         :alt="getTitle(item)"
-        class="w-full h-60 object-cover group-hover:scale-105 transition-transform duration-300"
+        class="w-full h-60 object-cover group-hover:scale-110 transition-transform duration-300"
       />
       <span
         v-if="isRecommended(item)"

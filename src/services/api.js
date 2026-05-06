@@ -12,6 +12,17 @@ export const getPopularTVShows = () => api.get("/tv/popular");
 export const getTrending = () => api.get("/trending/all/week");
 export const getMovieGenres = () => api.get("/genre/movie/list");
 export const getTVGenres = () => api.get("/genre/tv/list");
+
+export const getMovieDetail = (id) => api.get(`/movie/${id}`);
+export const getMovieCredits = (id) => api.get(`/movie/${id}/credits`);
+export const getMovieVideos = (id) => api.get(`/movie/${id}/videos`);
+export const getSimilarMovies = (id) => api.get(`/movie/${id}/similar`);
+
+export const getTVDetail = (id) => api.get(`/tv/${id}`);
+export const getTVCredits = (id) => api.get(`/tv/${id}/credits`);
+export const getTVVideos = (id) => api.get(`/tv/${id}/videos`);
+export const getSimilarTV = (id) => api.get(`/tv/${id}/similar`);
+
 export const getDiscoverMovies = (page = 1, genreId = null) =>
   api.get("/discover/movie", {
     params: { page, ...(genreId && { with_genres: genreId }) },
