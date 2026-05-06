@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+:root {
+  --dark: #111111;
+  --dark-alternate: #1b1918;
+  --primary: #e50914;
+  --primary-light: #f4ebeb;
+  --font-poppins: 'Poppins', sans-serif;
+  --font-logo: 'Orbitron', sans-serif;
+}
+
+@theme {
+  --color-dark: #111111;
+  --color-dark-alternate: #1b1918;
+  --color-primary: #e50914;
+  --color-primary-light: #f4ebeb;
+  --font-poppins: 'Poppins', sans-serif;
+  --font-logo: 'Orbitron', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-poppins);
+  background: var(--dark);
+}
+
+html {
+  overflow-x: hidden;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
